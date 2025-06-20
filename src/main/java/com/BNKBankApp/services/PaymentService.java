@@ -24,14 +24,13 @@ public class PaymentService {
     }
 
     public boolean validatePaymentRequest(PaymentRequest paymentRequest) {
-        if(paymentRequest == null){
+        if( paymentRequest.getCardNumber().length() < 16 &&
+                paymentRequest.getCurrency()  == null &&
+                paymentRequest.getCvv() == null &&
+                paymentRequest.getExpiryDate() == null){
             return false;
         }
-        return paymentRequest.getCardNumber() != null &&
-                paymentRequest.getCardNumber().length() == 16 &&
-                paymentRequest.getCurrency()  != null &&
-                paymentRequest.getCvv() != null &&
-                paymentRequest.getExpiryDate() != null;
+        return true;
     }
 
     public PaymentResponse processPayment (PaymentRequest paymentRequest){

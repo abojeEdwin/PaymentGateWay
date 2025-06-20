@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 
 @SpringBootApplication
-@RestController
+@RestController("/api/payment")
 public class PaymentController {
 
     @Autowired
@@ -25,10 +25,10 @@ public class PaymentController {
         return  ResponseEntity.ok(paymentService.processPayment(paymentRequest));
     }
 
-    @GetMapping("/{transactionId}")
+    @GetMapping("/transactionId")
     @ExceptionHandler(PaymentDetailsNotFoundException.class)
-    public ResponseEntity <PaymentDetails> getPaymentDetails(@PathVariable String transactionId) throws Exception {
-        PaymentDetails paymentDetails = paymentTransactionService.getPaymentDetails(transactionId);
+    public ResponseEntity <PaymentDetails> getPaymentDetails(@RequestBody String transactionId) throws Exception {
+          PaymentDetails paymentDetails = paymentTransactionService.getPaymentDetails(transactionId);
             if(paymentDetails != null ){
                 return ResponseEntity.ok(paymentDetails);
             }else throw new PaymentDetailsNotFoundException("Payment Details Not Found");
