@@ -23,15 +23,11 @@ public class PaymentService {
         this.paymentTransactionService = paymentTransactionService;
     }
 
-    public String generateTransactionId() {
-        return UUID.randomUUID().toString();
-    }
 
     public boolean validatePaymentRequest(PaymentRequest paymentRequest) {
         if( paymentRequest.getCardNumber().length() < 16 &&
                 paymentRequest.getCurrency()  == null &&
-                paymentRequest.getCvv() == null &&
-                paymentRequest.getExpiryDate() == null){
+                paymentRequest.getCvv() == null){
             return false;
         }
         return true;
@@ -39,28 +35,27 @@ public class PaymentService {
 
     public PaymentResponse processPayment (PaymentRequest paymentRequest){
         PaymentResponse paymentResponse = new PaymentResponse();
-        String transactionId = generateTransactionId();
 
         if(!validatePaymentRequest(paymentRequest)){
             paymentResponse.setStatus("Failed");
             paymentResponse.setMessage("Invalid Payment Request");
             return paymentResponse;
         }
-        double totalAmount = paymentRequest.getAmount() * BankSimulator.TRANSACTION_FEE;
+        double totalAmount = paymentRequest.getAmount() + BankSimulator.TRANSACTION_FEE;
 
-        if(paymentTransactionService.isTransactionDuplicate(transactionId, paymentRequest.getCardNumber(), paymentRequest.getAmount())){
-            paymentResponse.setStatus("Duplicate transaction with : " + transactionId);
-            paymentResponse.setMessage("Duplicate transaction");
-            return paymentResponse;
-        }
+//        if(paymentTransactionService.isTransactionDuplicate(paymentRequest.getTransactionId(), paymentRequest.getCardNumber(), paymentRequest.getAmount())){
+//            paymentResponse.setStatus("Duplicate transaction with : " + paymentRequest.getTransactionId());
+//            paymentResponse.setMessage("Duplicate transaction");
+//            return paymentResponse;
+//        }
 
         paymentResponse = bankSimulator.retrieveFromBank(paymentRequest.getCardNumber(), paymentRequest.getAmount());
-        paymentResponse.setTransactionId(transactionId);
+        paymentResponse.setTransactionId(paymentRequest.getTransactionId());
         paymentResponse.setTotalAmount(totalAmount);
         paymentResponse.setCurrency(paymentRequest.getCurrency());
         paymentResponse.setOriginalAmount(paymentRequest.getAmount());
 
-        PaymentDetails paymentDetails = new PaymentDetails(transactionId,paymentRequest.getCardNumber(),paymentRequest.getAmount(),totalAmount);
+        PaymentDetails paymentDetails = new PaymentDetails(paymentRequest.getTransactionId(),paymentRequest.getCardNumber(),paymentRequest.getAmount(),totalAmount);
         paymentTransactionService.storePaymentDetails(paymentDetails);
         return paymentResponse;
     }

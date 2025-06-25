@@ -33,15 +33,19 @@ public class PaymentRequest {
     @NotNull(message = "This field cannot be empty")
     private String currency;
 
+    @NotNull(message = "This field cannot be empty")
+    private String transactionId;
+
     private Account account;
 
-    public PaymentRequest(String cardNumber, double amount, String cvv, String expiryDate, String currency, Account account) {
+    public PaymentRequest(String cardNumber, double amount, String cvv, String expiryDate, String currency, Account account, String transactionId) {
         this.cardNumber = cardNumber;
         this.amount = amount;
         this.cvv = cvv;
         this.expiryDate = expiryDate;
         this.account = account;
         this.currency = currency;
+        this.transactionId = transactionId;
 
     }
 

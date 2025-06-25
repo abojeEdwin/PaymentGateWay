@@ -1,19 +1,31 @@
 package com.BNKBankApp.simulator;
+import com.BNKBankApp.data.model.Account;
+import com.BNKBankApp.data.model.PaymentRequest;
 import com.BNKBankApp.data.model.PaymentResponse;
+import com.BNKBankApp.data.repository.PaymentRequestRepo;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.Optional;
 import java.util.Random;
 
 
 @Service
 public class BankSimulator {
 
+    @Autowired
+    private PaymentRequestRepo paymentRequestRepo;
+
 
     public static double TRANSACTION_FEE = 0.02;
+
+    public BankSimulator(PaymentRequestRepo paymentRequestRepo) {
+        this.paymentRequestRepo = paymentRequestRepo;
+    }
 
 
     public boolean retrieveMoney(String cardNumber, double amount){
         if(isCardValid(cardNumber) && hasSufficientFunds(cardNumber, amount)){
-            //Deduct the transaction fee from the amount
             double fee = amount * TRANSACTION_FEE;
             double totalAmount = amount + fee;
 
@@ -27,45 +39,41 @@ public class BankSimulator {
 
     }
     private boolean isCardValid(String cardNumber){
-        //This is a simulator check
-        int count = 0;
-        for(int i = 0; i < cardNumber.length(); i++){
-            count ++;
-            if(count == 13){
-                return true;
-            }
+        Optional<PaymentRequest> foundAccount = paymentRequestRepo.findByCardNumber(cardNumber);
+        if(foundAccount.get().getAccount() == null){
+            return false;
         }
-
-
-        return false;
+        return true;
     }
 
     private boolean hasSufficientFunds(String cardNumber, double amount){
-        //Check if the card has sufficient funds
-        //Retrieve the available balance for the card from a database or a payment gateway
-        double availableBalance = getAvailableBalance(cardNumber);
-        return availableBalance >= amount;
+        Optional<PaymentRequest> foundAccount = paymentRequestRepo.findByCardNumber(cardNumber);
+        if(foundAccount.get().getAccount().getBalance() <= amount){
+            return false;
+        }
+        return true;
 
     }
 
     private double getAvailableBalance(String cardNumber){
-        //Simulate the available balance as a double value
-        return 1000.0;
+        Optional<PaymentRequest> foundAccount = paymentRequestRepo.findByCardNumber(cardNumber);
+        return foundAccount.get().getAccount().getBalance();
     }
 
     private boolean retrieveFromCard(String cardNumber, double amount){
-        //Simulate the available balance as a double value
+        Optional<PaymentRequest> foundAccount = paymentRequestRepo.findByCardNumber(cardNumber);
+        if(foundAccount.get().getAccount() == null){
+            return false;
+        }
+        return true;
 
-        Random rand = new Random();
-        return rand.nextBoolean();//Simulate retrieval success/failure randomly
     }
 
 
     public PaymentResponse retrieveFromBank(String cardNumber, double amount){
-        BankSimulator simulator = new BankSimulator();
-        PaymentResponse paymentResponse = new PaymentResponse();
 
-        boolean transactionResult = simulator.retrieveMoney(cardNumber,amount);
+        PaymentResponse paymentResponse = new PaymentResponse();
+        boolean transactionResult = retrieveMoney(cardNumber,amount);
         if(transactionResult){
             paymentResponse.setMessage("Money retrieved successfully");
             paymentResponse.setStatus("Success");

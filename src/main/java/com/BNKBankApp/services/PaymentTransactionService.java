@@ -1,6 +1,10 @@
 package com.BNKBankApp.services;
 import com.BNKBankApp.data.model.PaymentDetails;
+import com.BNKBankApp.data.model.Transaction;
+import com.BNKBankApp.data.repository.PaymentRequestRepo;
+import com.BNKBankApp.data.repository.TransactionRepository;
 import com.BNKBankApp.exception.PaymentDetailsNotFoundException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
@@ -9,11 +13,11 @@ import java.util.Map;
 @Service
 public class PaymentTransactionService {
 
-    private Map<String , PaymentDetails> paymentDetailsMap;
+    @Autowired
+    private PaymentRequestRepo paymentRequestRepo;
 
-    public PaymentTransactionService(Map<String, PaymentDetails> paymentDetailsMap) {
-        this.paymentDetailsMap = new HashMap<>();
-    }
+    @Autowired
+    private TransactionRepository transactionRepository;
 
     public void storePaymentDetails(PaymentDetails paymentDetails) {
         this.paymentDetailsMap.put(paymentDetails.getTransactionId(), paymentDetails);
