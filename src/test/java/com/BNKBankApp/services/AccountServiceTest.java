@@ -2,6 +2,7 @@ package com.BNKBankApp.services;
 import com.BNKBankApp.data.model.Account;
 import com.BNKBankApp.data.model.PaymentDetails;
 import com.BNKBankApp.data.model.PaymentRequest;
+import com.BNKBankApp.data.repository.AccountRepository;
 import com.BNKBankApp.data.repository.PaymentRequestRepo;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -28,6 +29,9 @@ class AccountServiceTest {
 
     @Autowired
     private PaymentRequestRepo paymentRequestRepo;
+
+    @Autowired
+    private AccountRepository accountRepository;
 
 //    @BeforeEach
 //    void beforeEach(){
@@ -77,6 +81,12 @@ class AccountServiceTest {
 
         assertEquals(2,paymentRequestRepo.count());
 
+    }
+
+    @Test
+    public void testAccountServiceTransfer(){
+        accountService.transfer("0482752600","1424181203",1000.0,"0000");
+        assertEquals(500,accountRepository.findByAccountNumber("0482752600").getBalance());
     }
 
 

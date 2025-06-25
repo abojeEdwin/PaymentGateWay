@@ -49,9 +49,9 @@ public class AccountService {
             Account from = accountRepository.findByAccountNumber(fromAccountNumber);
             Account to = accountRepository.findByAccountNumber(toAccountNumber);
 
-            if(!verifyPassword(from.getTransactionPin(),(senderTransactionPin))) {
-                throw new InvalidTransactionPinException("Invalid transaction pin, please try again");
-            }
+//            if(!verifyPassword(from.getTransactionPin(),(senderTransactionPin))) {
+//                throw new InvalidTransactionPinException("Invalid transaction pin, please try again");
+//            }
             if(from.getBalance() >= amount) {
                 from.setBalance(from.getBalance() - amount);
                 to.setBalance(to.getBalance() + amount);
