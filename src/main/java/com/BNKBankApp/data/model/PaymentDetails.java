@@ -2,12 +2,14 @@ package com.BNKBankApp.data.model;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.stereotype.Component;
 
 @Getter
 @Setter
 @Component
 @NoArgsConstructor
+@Document(collection = "PaymentDetails")
 public class PaymentDetails {
     private String transactionId;
     private String cardNumber;

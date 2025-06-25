@@ -2,13 +2,17 @@ package com.BNKBankApp.services;
 import com.BNKBankApp.data.model.PaymentDetails;
 import com.BNKBankApp.data.model.PaymentRequest;
 import com.BNKBankApp.data.model.PaymentResponse;
+import com.BNKBankApp.data.repository.PaymentRequestRepo;
 import com.BNKBankApp.simulator.BankSimulator;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import java.util.UUID;
 
 @Service
 public class PaymentService {
+
+    @Autowired
+    PaymentRequestRepo paymentRequestRepo;
 
     private BankSimulator bankSimulator;
     private  PaymentTransactionService paymentTransactionService;
@@ -59,5 +63,9 @@ public class PaymentService {
         PaymentDetails paymentDetails = new PaymentDetails(transactionId,paymentRequest.getCardNumber(),paymentRequest.getAmount(),totalAmount);
         paymentTransactionService.storePaymentDetails(paymentDetails);
         return paymentResponse;
+    }
+
+    public PaymentRequest savePaymentRequest(PaymentRequest paymentRequest){
+        return paymentRequestRepo.save(paymentRequest);
     }
 }

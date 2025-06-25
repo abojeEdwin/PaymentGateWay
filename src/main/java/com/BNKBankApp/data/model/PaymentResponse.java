@@ -3,13 +3,14 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.stereotype.Component;
-
 
 @Getter
 @Setter
 @Component
 @NoArgsConstructor
+@Document(collection = "PaymentResponse")
 public class PaymentResponse {
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
